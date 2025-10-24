@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Map Memo</title>
+    <script type="text/javascript"
+            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b8e3c3388eb97f7ae6447be9cb10a75f&autoload=false"></script>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; }
+        h2 { padding: 10px; background: #f5f5f5; border-bottom: 1px solid #ddd; }
+        #map { width: 100%; height: 90vh; }
+    </style>
+</head>
+<body>
+<h2>🗺️ 지도에 메모 남기기</h2>
+<div id="map"></div>
+
+<script th:inline="javascript">
+    kakao.maps.load(function() {
+        const container = document.getElementById('map');
+        const options = {
+            center: new kakao.maps.LatLng(37.5665, 126.9780), // 기본값 (서울)
+            level: 3
+        };
+        const map = new kakao.maps.Map(container, options);
+
+        // ✅ 현재 위치로 이동 (Geolocation)
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function(position) {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    const currentPosition = new kakao.maps.LatLng(lat, lng);
+
+                    // 지도 중심을 현재 위치로 이동
+                    map.setCenter(currentPosition);
+
+        // ✅ 현재 위치 마커 (커스텀 아이콘 사용)
+        const imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; // 예시 이미지
+        const imageSize = new kakao.maps.Size(24, 35); // 이미지 크기
+        const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+
+                    // 현재 위치에 마커 표시
+                    new kakao.maps.Marker({
+                        map: map,
+                        position: currentPosition,
+                        title: "현재 위치",
+                        image: markerImage
+                    });
+                },
+                function(error) {
+                    console.warn("위치 정보를 가져올 수 없습니다.", error);
+                }
+            );
+        } else {
+            alert("이 브라우저에서는 위치 정보를 사용할 수 없습니다.");
+        }
+
+        // ✅ 기존 메모 불러오기
+        fetch('/api/memos')
+            .then(res => res.ok ? res.json() : Promise.reject("메모 불러오기 실패"))
+            .then(data => data.forEach(memo => addMarker(memo)))
+            .catch(err => console.error(err));
+
+        // ✅ 지도 클릭 시 메모 등록
+        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+            const latlng = mouseEvent.latLng;
+            const title = prompt("메모 제목:");
+            const content = prompt("메모 내용:");
+
+            if (!title || !content) return;
+
+            const memoData = {
+                title,
+                content,
+                latitude: latlng.getLat(),
+                longitude: latlng.getLng()
+            };
+
+            fetch('/api/memos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(memoData)
+            })
+            .then(res => res.ok ? res.json() : Promise.reject("메모 저장 실패"))
+            .then(savedMemo => {
+                alert("메모 저장 완료!");
+                addMarker(savedMemo);
+            })
+            .catch(err => alert(err));
+        });
+
+        // ✅ 마커 + 풍선창 함수
+        function addMarker(memo) {
+            const marker = new kakao.maps.Marker({
+                map,
+                position: new kakao.maps.LatLng(memo.latitude, memo.longitude),
+                title: memo.title
+            });
+
+            const info = new kakao.maps.InfoWindow({
+                content: `
+                    <div style="padding:6px; min-width:150px;">
+                        <strong>${memo.title}</strong><br>
+                        <small>${memo.content}</small>
+                    </div>`
+            });
+
+            kakao.maps.event.addListener(marker, 'click', () => info.open(map, marker));
+        }
+    });
+</script>
+</body>
+</html>
