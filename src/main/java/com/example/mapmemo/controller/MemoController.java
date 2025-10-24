@@ -3,6 +3,8 @@ package com.example.mapmemo.controller;
 import com.example.mapmemo.entity.Memo;
 import com.example.mapmemo.service.MemoService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

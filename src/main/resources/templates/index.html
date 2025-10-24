@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Map Memo</title>
-    <script type="text/javascript"
-            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b8e3c3388eb97f7ae6447be9cb10a75f&autoload=false"></script>
+    <script th:src="@{|//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApikey}|}"></script>
     <style>
         body { font-family: sans-serif; margin: 0; padding: 0; }
         h2 { padding: 10px; background: #f5f5f5; border-bottom: 1px solid #ddd; }

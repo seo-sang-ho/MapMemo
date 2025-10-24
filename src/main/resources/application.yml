@@ -1,8 +1,12 @@
 spring:
+  config:
+    import: "optional:application-secret.yml"
+
   datasource:
     url: jdbc:mysql://localhost:3306/mapmemo?serverTimezone=Asia/Seoul
     username: root
     password:
+
   jpa:
     hibernate:
       ddl-auto: update
