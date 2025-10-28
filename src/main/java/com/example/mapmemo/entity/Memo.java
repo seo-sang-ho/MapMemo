@@ -1,9 +1,6 @@
 package com.example.mapmemo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +19,9 @@ public class Memo {
 
     private String title;
     private String content;
+
+    @Enumerated(EnumType.STRING) // db에는 문자열로 저장
+    private Category category;
 
     private double latitude;
     private double longitude;
