@@ -12,6 +12,11 @@
 </head>
 <body>
 <h2>🗺️ 지도에 메모 남기기</h2>
+
+<!-- 사이드바 -->
+<div id="sidebar" th:replace="sidebar :: sidebarFragment"></div>
+
+<!-- 지도 -->
 <div id="map"></div>
 
 <script th:inline="javascript">
@@ -61,52 +66,82 @@
             .then(data => data.forEach(memo => addMarker(memo)))
             .catch(err => console.error(err));
 
-        // ✅ 지도 클릭 시 메모 등록
-        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-            const latlng = mouseEvent.latLng;
-            const title = prompt("메모 제목:");
-            const content = prompt("메모 내용:");
+// 지도 클릭 시 메모 등록
+kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+    const latlng = mouseEvent.latLng;
 
-            if (!title || !content) return;
+    const title = prompt("메모 제목:");
+    const content = prompt("메모 내용:");
 
-            const memoData = {
-                title,
-                content,
-                latitude: latlng.getLat(),
-                longitude: latlng.getLng()
-            };
+    // 카테고리 선택 안내
+    const category = prompt("카테고리를 선택하세요:\n1: 화장실(TOILET)\n2: 가게(STORE)\n3: 기타(ETC)");
 
-            fetch('/api/memos', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(memoData)
-            })
-            .then(res => res.ok ? res.json() : Promise.reject("메모 저장 실패"))
-            .then(savedMemo => {
-                alert("메모 저장 완료!");
-                addMarker(savedMemo);
-            })
-            .catch(err => alert(err));
-        });
+    let categoryValue;
+    switch(category) {
+        case "1":
+            categoryValue = "TOILET";
+            break;
+        case "2":
+            categoryValue = "STORE";
+            break;
+        case "3":
+            categoryValue = "ETC";
+            break;
+        default:
+            alert("올바른 카테고리를 선택해주세요.");
+            return;
+    }
+
+    if (!title || !content) return;
+
+    const memoData = {
+        title,
+        content,
+        category: categoryValue,
+        latitude: latlng.getLat(),
+        longitude: latlng.getLng()
+    };
+
+    fetch('/api/memos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(memoData)
+    })
+    .then(res => res.ok ? res.json() : Promise.reject("메모 저장 실패"))
+    .then(savedMemo => {
+        alert(`[${savedMemo.category}] ${savedMemo.title} 저장 완료!`);
+        addMarker(savedMemo); // 지도 + 사이드바 업데이트
+    })
+    .catch(err => alert(err));
+});
+
+
 
         // ✅ 마커 + 풍선창 함수
         function addMarker(memo) {
-            const marker = new kakao.maps.Marker({
-                map,
-                position: new kakao.maps.LatLng(memo.latitude, memo.longitude),
-                title: memo.title
-            });
+    const marker = new kakao.maps.Marker({
+        map,
+        position: new kakao.maps.LatLng(memo.latitude, memo.longitude),
+        title: memo.title
+    });
 
-            const info = new kakao.maps.InfoWindow({
-                content: `
-                    <div style="padding:6px; min-width:150px;">
-                        <strong>${memo.title}</strong><br>
-                        <small>${memo.content}</small>
-                    </div>`
-            });
+    const info = new kakao.maps.InfoWindow({
+        content: `
+            <div style="padding:6px; min-width:150px;">
+                <strong>${memo.title}</strong> (${memo.category})<br>
+                <small>${memo.content}</small>
+            </div>`
+    });
 
-            kakao.maps.event.addListener(marker, 'click', () => info.open(map, marker));
-        }
+    kakao.maps.event.addListener(marker, 'click', () => info.open(map, marker));
+
+    // 사이드바 업데이트
+    const ul = document.getElementById("memo-list");
+    const li = document.createElement("li");
+    li.textContent = `${memo.title} (${memo.category})`;
+    ul.appendChild(li);
+}
+
     });
 </script>
 </body>

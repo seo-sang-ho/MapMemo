@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- 재사용 가능한 사이드바 fragment 정의 -->
+<div th:fragment="sidebarFragment">
+    <h3>메모 리스트</h3>
+    <ul id="memo-list">
+        <!-- 서버에서 전달한 메모 목록 반복 -->
+        <li th:each="memo : ${memos}" th:text="${memo.title} + ' (' + ${memo.category} + ')'"></li>
+    </ul>
+</div>
+</body>
+</html>
