@@ -1,5 +1,6 @@
 package com.example.mapmemo.service;
 
+import com.example.mapmemo.entity.Category;
 import com.example.mapmemo.entity.Memo;
 import com.example.mapmemo.repository.MemoRepository;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,11 @@ public class MemoService {
         return memoRepository.save(memo);
     }
 
-    public void deleteMemo(Long id) {
+    public void delete(Long id) {
         memoRepository.deleteById(id);
+    }
+
+    public List<Memo> findByCategory(Category category) {
+        return memoRepository.findByCategory(category);
     }
 }
