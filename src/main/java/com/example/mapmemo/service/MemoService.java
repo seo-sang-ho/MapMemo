@@ -2,6 +2,7 @@ package com.example.mapmemo.service;
 
 import com.example.mapmemo.entity.Category;
 import com.example.mapmemo.entity.Memo;
+import com.example.mapmemo.entity.MemoSearchCondition;
 import com.example.mapmemo.repository.MemoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,5 +29,9 @@ public class MemoService {
 
     public List<Memo> findByCategory(Category category) {
         return memoRepository.findByCategory(category);
+    }
+
+    public List<Memo> searchMemos(MemoSearchCondition condition) {
+        return memoRepository.searchMemos(condition);
     }
 }

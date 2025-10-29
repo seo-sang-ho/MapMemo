@@ -1,6 +1,7 @@
 package com.example.mapmemo.controller;
 
 import com.example.mapmemo.entity.Memo;
+import com.example.mapmemo.entity.MemoSearchCondition;
 import com.example.mapmemo.service.MemoService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,5 +30,10 @@ public class MemoController {
     @DeleteMapping("/{id}")
     public void deleteMemo(@PathVariable Long id) {
         memoService.delete(id);
+    }
+
+    @GetMapping("/search")
+    public List<Memo> searchMemo(@ModelAttribute MemoSearchCondition condition) {
+        return memoService.searchMemos(condition);
     }
 }
