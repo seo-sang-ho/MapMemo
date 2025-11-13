@@ -26,9 +26,10 @@ public class Memo {
     private double latitude;
     private double longitude;
 
-    public Memo(String title, String content, double latitude, double longitude) {
+    public Memo(String title, String content, Category category, double latitude, double longitude) {
         this.title = title;
         this.content = content;
+        this.category = category;
         this.latitude = latitude;
         this.longitude = longitude;
     }
