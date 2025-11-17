@@ -2,6 +2,7 @@ package com.example.mapmemo.service;
 
 import com.example.mapmemo.entity.Category;
 import com.example.mapmemo.entity.Memo;
+import com.example.mapmemo.entity.MemoRequestDto;
 import com.example.mapmemo.entity.MemoSearchCondition;
 import com.example.mapmemo.repository.MemoRepository;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,15 @@ public class MemoService {
         return memoRepository.findAll();
     }
 
-    public Memo save(Memo memo) {
+    public Memo save(MemoRequestDto memoRequestDto) {
+        Memo memo = Memo.builder()
+                .title(memoRequestDto.getTitle())
+                .content(memoRequestDto.getContent())
+                .category(memoRequestDto.getCategory())
+                .latitude(memoRequestDto.getLatitude())
+                .longitude(memoRequestDto.getLongitude())
+                .build();
+
         return memoRepository.save(memo);
     }
 
