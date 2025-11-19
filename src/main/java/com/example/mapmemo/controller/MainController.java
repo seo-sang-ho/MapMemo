@@ -12,8 +12,6 @@ import java.util.List;
 @Controller
 public class MainController {
 
-    @Value("${kakao.api.key}")
-    private String kakaoApikey;
     private final MemoService memoService;
 
     public MainController(MemoService memoService) {
@@ -24,7 +22,6 @@ public class MainController {
     public String index(Model model){
         List<Memo> memos = memoService.getAllMemos();
         model.addAttribute("memos",memos);
-        model.addAttribute("kakaoApikey", kakaoApikey);
         return "index";
     }
 }
