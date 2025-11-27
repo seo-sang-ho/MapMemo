@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -38,5 +40,14 @@ public class MemberService {
         memberRepository.save(member);
 
         return member.getId();
+    }
+
+    public Member login(String loginId, String password) {
+        Member member = memberRepository.findByLoginId(loginId).orElseThrow(() -> new IllegalArgumentException("없는 회원입니다."));
+
+        if( !passwordEncoder.matches(password, member.getPassword())){
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        return member;
     }
 }
