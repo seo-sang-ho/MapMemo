@@ -6,6 +6,7 @@ import com.example.mapmemo.entity.MemoSearchCondition;
 import com.example.mapmemo.service.MemoService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,5 +37,10 @@ public class MemoController {
     @GetMapping("/search")
     public List<Memo> searchMemo(@ModelAttribute MemoSearchCondition condition) {
         return memoService.searchMemos(condition);
+    }
+
+    @GetMapping("/profile")
+    public String profile(Authentication auth) {
+        return "현재 로그인한 사용자 : " + auth.getName();
     }
 }

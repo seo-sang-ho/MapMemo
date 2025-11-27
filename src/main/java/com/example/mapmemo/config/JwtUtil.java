@@ -1,4 +1,4 @@
-package com.example.mapmemo.security;
+package com.example.mapmemo.config;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
