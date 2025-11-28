@@ -14,22 +14,26 @@ public class JwtUtil {
 
     @Value("${jwt.secret-key}")
     private String SECRET_KEY;
-    private final long EXPIRATION_MS = 1000 * 60 * 60; // 1시간
+    private final long ACCESS_EXPIRE_MS = 1000 * 60 * 30; // 30분
+    private final long REFRESH_EXPIRE_MS = 1000 * 60 * 60 * 24 * 7; // 7일
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
     }
 
+    // Access token 생성
     public String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
+                .setExpiration(new Date(System.currentTimeMillis() + sdasACCESS_EXPIRE_MS))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String extractUsername(String token) {
+    public String extractUse
+
+    rname(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()
