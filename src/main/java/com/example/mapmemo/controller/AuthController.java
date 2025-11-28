@@ -5,7 +5,10 @@ import com.example.mapmemo.entity.LoginRequest;
 import com.example.mapmemo.entity.Member;
 import com.example.mapmemo.entity.SignupRequest;
 import com.example.mapmemo.repository.MemberRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -40,15 +43,49 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletResponse response) {
 
-        Member dbMember = memberRepository.findByLoginId(request.getLoginId())
+        Member member = memberRepository.findByLoginId(request.getLoginId())
                 .orElseThrow(() -> new RuntimeException("유저 없음"));
 
-        if (!passwordEncoder.matches(request.getPassword(), dbMember.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
             throw new RuntimeException("비밀번호 불일치");
         }
 
-        return jwtUtil.generateToken(dbMember.getLoginId());
+        // Access, Refresh Token
+        String accessToken = jwtUtil.generateAccessToken(member.getLoginId());
+        String refreshToken = jwtUtil.generateRefreshToken();
+
+        member.updateRefreshToken(refreshToken);
+        memberRepository.save(member);
+
+        // refresh Token -> httpOnly 쿠키 저장
+        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(7 * 24 * 60 * 60); // 7일
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok(accessToken);
+
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<?> refreshToken(@CookieValue("refreshToken") String refreshToken) {
+
+        // Refresh Token 유효성 검증
+        if (!jwtUtil.validateToken(refreshToken)) {
+            return ResponseEntity.status(401).body("Refresh Token invalid");
+        }
+
+        // DB에 저장된 Refresh Token과 비교
+        Member member = memberRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new RuntimeException("로그인 다시 필요"));
+
+        // Access Token 재발급
+        String newAccessToken = jwtUtil.generateAccessToken(member.getLoginId());
+
+        return ResponseEntity.ok(newAccessToken);
+    }
+
 }

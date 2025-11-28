@@ -22,18 +22,24 @@ public class JwtUtil {
     }
 
     // Access token 생성
-    public String generateToken(String username) {
+    public String generateAccessToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + sdasACCESS_EXPIRE_MS))
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_EXPIRE_MS))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String extractUse
+    // Refresh token 생성
+    public String generateRefreshToken(){
+        return Jwts.builder()
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRE_MS))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
 
-    rname(String token) {
+    public String extractUsername(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
                 .build()

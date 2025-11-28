@@ -34,9 +34,15 @@ public class Member {
 
     private String roles;
 
+    private String refreshToken;
+
     @CreationTimestamp
     private LocalDateTime createAt;
 
     @UpdateTimestamp
     private LocalDateTime updateAt;
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 }
