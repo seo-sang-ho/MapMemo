@@ -14,7 +14,7 @@ public class JwtUtil {
 
     @Value("${jwt.secret-key}")
     private String SECRET_KEY;
-    private final long ACCESS_EXPIRE_MS = 1000 * 10; // 30분
+    private final long ACCESS_EXPIRE_MS = 1000 * 60 * 30; // 30분
     private final long REFRESH_EXPIRE_MS = 1000 * 60 * 60 * 24 * 7; // 7일
 
     private Key getSigningKey() {
