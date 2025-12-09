@@ -3,10 +3,13 @@ package com.example.mapmemo.controller;
 import com.example.mapmemo.entity.Memo;
 import com.example.mapmemo.entity.MemoRequestDto;
 import com.example.mapmemo.entity.MemoSearchCondition;
+import com.example.mapmemo.security.CustomUserDetails;
 import com.example.mapmemo.service.MemoService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +23,17 @@ public class MemoController {
     private final MemoService memoService;
 
     @GetMapping
-    public List<Memo> getAllMemos(){
-        return memoService.getAllMemos();
+    public ResponseEntity<List<Memo>> getAllMemos(@AuthenticationPrincipal CustomUserDetails user){
+        Long loginId = user.getId();
+        List<Memo> myMemos = memoService.getMyMemos(loginId);
+
+        return ResponseEntity.ok(myMemos);
     }
 
     @PostMapping
-    public Memo createMemo(@RequestBody MemoRequestDto memo) {
-        return memoService.save(memo);
+    public Memo createMemo(@RequestBody MemoRequestDto memo,
+                           @AuthenticationPrincipal CustomUserDetails user) {
+        return memoService.save(memo, user);
     }
 
     @DeleteMapping("/{id}")

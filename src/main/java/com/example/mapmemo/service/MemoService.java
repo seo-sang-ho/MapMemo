@@ -1,10 +1,10 @@
 package com.example.mapmemo.service;
 
-import com.example.mapmemo.entity.Category;
-import com.example.mapmemo.entity.Memo;
-import com.example.mapmemo.entity.MemoRequestDto;
-import com.example.mapmemo.entity.MemoSearchCondition;
+import com.example.mapmemo.entity.*;
+import com.example.mapmemo.repository.MemberRepository;
 import com.example.mapmemo.repository.MemoRepository;
+import com.example.mapmemo.security.CustomUserDetails;
+import com.example.mapmemo.security.UserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,18 +15,24 @@ import java.util.List;
 public class MemoService {
 
     private final MemoRepository memoRepository;
+    private final MemberRepository memberRepository;
 
-    public List<Memo> getAllMemos(){
-        return memoRepository.findAll();
+    public List<Memo> getMyMemos(Long memberId){
+        return memoRepository.findByMemberId(memberId);
     }
 
-    public Memo save(MemoRequestDto memoRequestDto) {
+    public Memo save(MemoRequestDto memoRequestDto, CustomUserDetails userDetails) {
+
+        Member loginMember = memberRepository.findByLoginId(userDetails.getLoginId())
+                .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+
         Memo memo = Memo.builder()
                 .title(memoRequestDto.getTitle())
                 .content(memoRequestDto.getContent())
                 .category(memoRequestDto.getCategory())
                 .latitude(memoRequestDto.getLatitude())
                 .longitude(memoRequestDto.getLongitude())
+                .member(loginMember)
                 .build();
 
         return memoRepository.save(memo);

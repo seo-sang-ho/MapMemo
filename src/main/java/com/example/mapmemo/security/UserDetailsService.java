@@ -1,19 +1,15 @@
-package com.example.mapmemo.service;
+package com.example.mapmemo.security;
 
 import com.example.mapmemo.entity.Member;
 import com.example.mapmemo.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
-public class MemberDetailsService implements UserDetailsService {
+public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
 
 private final MemberRepository memberRepository;
 
@@ -21,10 +17,6 @@ private final MemberRepository memberRepository;
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member = memberRepository.findByLoginId(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return User.builder()
-                .username(member.getLoginId())
-                .password(member.getPassword())
-                .roles(member.getRoles())
-                .build();
+        return new CustomUserDetails(member);
     }
 }

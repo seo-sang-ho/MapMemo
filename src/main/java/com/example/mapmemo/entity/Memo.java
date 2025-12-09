@@ -20,6 +20,10 @@ public class Memo {
     private String title;
     private String content;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Enumerated(EnumType.STRING) // db에는 문자열로 저장
     private Category category;
 

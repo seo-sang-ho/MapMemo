@@ -1,11 +1,14 @@
 package com.example.mapmemo.repository;
 
 import com.example.mapmemo.entity.Category;
+import com.example.mapmemo.entity.Member;
 import com.example.mapmemo.entity.Memo;
+import org.apache.catalina.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 public interface MemoRepository extends JpaRepository<Memo, Long>, MemoRepositoryCustom{
     List<Memo> findByCategory(Category category);
+    List<Memo> findByMemberId(Long memberId);
 }

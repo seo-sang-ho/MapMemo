@@ -88,4 +88,11 @@ public class AuthController {
         return ResponseEntity.ok(newAccessToken);
     }
 
+    @GetMapping("/userInfo")
+    public String userInfo(@RequestParam("id") String loginId) {
+        Member loginMember = memberRepository.findByLoginId(loginId).orElseThrow();
+
+        return "로그인 된 회원정보";
+    }
+
 }
