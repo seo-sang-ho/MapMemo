@@ -34,6 +34,7 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Builder.Default
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Memo> memos = new ArrayList<>();
 

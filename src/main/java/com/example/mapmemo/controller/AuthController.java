@@ -5,11 +5,14 @@ import com.example.mapmemo.entity.LoginRequest;
 import com.example.mapmemo.entity.Member;
 import com.example.mapmemo.entity.SignupRequest;
 import com.example.mapmemo.repository.MemberRepository;
+import com.example.mapmemo.security.CustomUserDetails;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -70,6 +73,21 @@ public class AuthController {
 
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+
+        ResponseCookie deleteCookie = ResponseCookie.from("refreshToken", "")
+                .httpOnly(true)
+                .path("/")
+                .maxAge(0)  // 즉시 삭제
+                .build();
+
+        response.addHeader("Set-Cookie", deleteCookie.toString());
+
+        return ResponseEntity.ok("Logged out");
+    }
+
+
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@CookieValue("refreshToken") String refreshToken) {
 
@@ -94,5 +112,11 @@ public class AuthController {
 
         return "로그인 된 회원정보";
     }
+
+    @GetMapping("/me")
+    public CustomUserDetails me(@AuthenticationPrincipal CustomUserDetails user) {
+        return user;
+    }
+
 
 }

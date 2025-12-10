@@ -22,7 +22,7 @@ public class MemoController {
 
     private final MemoService memoService;
 
-    @GetMapping
+    @GetMapping("/my")
     public ResponseEntity<List<Memo>> getAllMemos(@AuthenticationPrincipal CustomUserDetails user){
         Long loginId = user.getId();
         List<Memo> myMemos = memoService.getMyMemos(loginId);
