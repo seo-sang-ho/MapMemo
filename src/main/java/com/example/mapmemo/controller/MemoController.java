@@ -3,6 +3,7 @@ package com.example.mapmemo.controller;
 import com.example.mapmemo.entity.Memo;
 import com.example.mapmemo.entity.MemoRequestDto;
 import com.example.mapmemo.entity.MemoSearchCondition;
+import com.example.mapmemo.entity.MemoUpdateDto;
 import com.example.mapmemo.security.CustomUserDetails;
 import com.example.mapmemo.service.MemoService;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,10 @@ public class MemoController {
     public Memo createMemo(@RequestBody MemoRequestDto memo,
                            @AuthenticationPrincipal CustomUserDetails user) {
         return memoService.save(memo, user);
+    }
+    @PutMapping("/{id}")
+    public void updateMemo(@PathVariable Long id, @RequestBody MemoUpdateDto dto) {
+        memoService.updateMemo(id, dto);
     }
 
     @DeleteMapping("/{id}")

@@ -7,6 +7,7 @@ import com.example.mapmemo.security.CustomUserDetails;
 import com.example.mapmemo.security.UserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -48,5 +49,17 @@ public class MemoService {
 
     public List<Memo> searchMemos(MemoSearchCondition condition) {
         return memoRepository.searchMemos(condition);
+    }
+
+    @Transactional
+    public void updateMemo(Long id, MemoUpdateDto dto) {
+        Memo memo = memoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("미모가 존재하지 않습니다."));
+
+        memo.update(
+                dto.getTitle(),
+                dto.getContent(),
+                dto.getCategory()
+        );
     }
 }

@@ -39,4 +39,10 @@ public class Memo {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
+    public void update(String title, String content, Category category) {
+        this.title = title;
+        this.content = content;
+        this.category = category;
+    }
 }
