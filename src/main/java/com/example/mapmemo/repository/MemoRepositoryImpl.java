@@ -31,7 +31,7 @@ public class MemoRepositoryImpl implements MemoRepositoryCustom{
                 .selectFrom(memo)
                 .where(
                         categoryEq(condition.getCategory()),
-                        titleContains(condition.getTitle())
+                        keywordContains(condition.getKeyword())
                 )
                 .fetch();
     }
@@ -40,7 +40,10 @@ public class MemoRepositoryImpl implements MemoRepositoryCustom{
         return category != null ? memo.category.eq(category) : null;
     }
 
-    private BooleanExpression titleContains(String title) {
-        return title != null ? memo.title.contains(title) : null;
+    private BooleanExpression keywordContains(String keyword) {
+        if (keyword == null || keyword.isBlank()) return null;
+
+        return memo.title.contains(keyword)
+                .or(memo.content.contains(keyword));
     }
 }

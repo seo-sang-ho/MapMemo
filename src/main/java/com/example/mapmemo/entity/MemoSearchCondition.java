@@ -5,9 +5,5 @@ import lombok.Data;
 @Data
 public class MemoSearchCondition {
     private Category category;
-    private String title;
-    private Double minLat;
-    private Double maxLat;
-    private Double minLng;
-    private Double maxLng;
+    private String keyword; // title + content 통합검색
 }

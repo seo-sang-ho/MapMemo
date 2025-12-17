@@ -1,9 +1,6 @@
 package com.example.mapmemo.controller;
 
-import com.example.mapmemo.entity.Memo;
-import com.example.mapmemo.entity.MemoRequestDto;
-import com.example.mapmemo.entity.MemoSearchCondition;
-import com.example.mapmemo.entity.MemoUpdateDto;
+import com.example.mapmemo.entity.*;
 import com.example.mapmemo.security.CustomUserDetails;
 import com.example.mapmemo.service.MemoService;
 import lombok.AllArgsConstructor;
@@ -47,7 +44,11 @@ public class MemoController {
     }
 
     @GetMapping("/search")
-    public List<Memo> searchMemo(@ModelAttribute MemoSearchCondition condition) {
+    public List<Memo> searchMemo(@RequestParam(required = false)Category category,
+                                 @RequestParam(required = false) String keyword) {
+        MemoSearchCondition condition = new MemoSearchCondition();
+        condition.setCategory(category);
+        condition.setKeyword(keyword);
         return memoService.searchMemos(condition);
     }
 
