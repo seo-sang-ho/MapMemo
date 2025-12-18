@@ -4,6 +4,7 @@ import com.example.mapmemo.entity.*;
 import com.example.mapmemo.repository.MemberRepository;
 import com.example.mapmemo.repository.MemoRepository;
 import com.example.mapmemo.security.CustomUserDetails;
+import com.example.mapmemo.security.SecurityUtil;
 import com.example.mapmemo.security.UserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,8 @@ public class MemoService {
     }
 
     public List<Memo> searchMemos(MemoSearchCondition condition) {
+        Long memberId = SecurityUtil.getCurrentMemberId();
+        condition.setMemberId(memberId);
         return memoRepository.searchMemos(condition);
     }
 

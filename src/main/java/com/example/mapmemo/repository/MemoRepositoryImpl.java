@@ -3,6 +3,7 @@ package com.example.mapmemo.repository;
 import com.example.mapmemo.entity.Category;
 import com.example.mapmemo.entity.Memo;
 import com.example.mapmemo.entity.MemoSearchCondition;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -31,9 +32,14 @@ public class MemoRepositoryImpl implements MemoRepositoryCustom{
                 .selectFrom(memo)
                 .where(
                         categoryEq(condition.getCategory()),
-                        keywordContains(condition.getKeyword())
+                        keywordContains(condition.getKeyword()),
+                        memberEq(condition.getMemberId())
                 )
                 .fetch();
+    }
+
+    private BooleanExpression memberEq(Long memberId) {
+        return memberId != null? memo.member.id.eq(memberId) : null;
     }
 
     private BooleanExpression categoryEq(Category category) {

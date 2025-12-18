@@ -4,11 +4,9 @@ import com.example.mapmemo.entity.*;
 import com.example.mapmemo.security.CustomUserDetails;
 import com.example.mapmemo.service.MemoService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
