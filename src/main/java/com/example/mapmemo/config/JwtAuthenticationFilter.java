@@ -25,6 +25,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        // ✅ CORS preflight 무조건 통과
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String path = request.getRequestURI();
 
         // 로그인, 회원가입, 토큰 재발급은 JWT 필터 적용 제외
