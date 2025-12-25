@@ -4,6 +4,7 @@ import com.example.mapmemo.config.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,27 +37,20 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        // ✅ 프론트 정적 리소스
-                        .requestMatchers(
-                                "/",
-                                "/index.html",
-                                "/static/**",
-                                "/favicon.ico"
-                        ).permitAll()
-
-                        // ✅ 인증 관련
+                        // 인증 없이 허용할 API
                         .requestMatchers("/api/auth/**").permitAll()
 
-                        // ✅ CORS preflight
-                        .requestMatchers(OPTIONS, "/**").permitAll()
+                        // CORS preflight
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // 나머지는 JWT 필요
+                        // 나머지 API는 JWT 필요
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 
 
     @Bean
