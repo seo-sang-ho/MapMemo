@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -89,21 +90,21 @@ public class AuthController {
 
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@CookieValue("refreshToken") String refreshToken) {
-
-        // Refresh Token 유효성 검증
+    public ResponseEntity<?> refreshToken(
+            @CookieValue("refreshToken") String refreshToken
+    ) {
         if (!jwtUtil.validateToken(refreshToken)) {
-            return ResponseEntity.status(401).body("Refresh Token invalid");
+            return ResponseEntity.status(401).build();
         }
 
-        // DB에 저장된 Refresh Token과 비교
         Member member = memberRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new RuntimeException("로그인 다시 필요"));
 
-        // Access Token 재발급
         String newAccessToken = jwtUtil.generateAccessToken(member.getLoginId());
 
-        return ResponseEntity.ok(newAccessToken);
+        return ResponseEntity.ok(
+                Map.of("accessToken", newAccessToken)
+        );
     }
 
     @GetMapping("/userInfo")
