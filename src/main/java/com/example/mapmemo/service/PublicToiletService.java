@@ -69,4 +69,10 @@ public class PublicToiletService {
     public List<PublicToilet> findAll(){
         return toiletRepository.findAll();
     }
+
+    public List<PublicToilet> findAllForMap() {
+        return toiletRepository.findAll().stream()
+                .filter(t -> t.getLatitude() != null && t.getLongitude() != null)
+                .toList();
+    }
 }
