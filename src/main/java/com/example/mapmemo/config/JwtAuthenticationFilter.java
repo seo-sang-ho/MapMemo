@@ -22,19 +22,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+        String method = request.getMethod();
 
-        // ✅ CORS preflight 무조건 통과
+        System.out.println("🟡 shouldNotFilter uri = " + uri);
+        System.out.println("🟡 method = " + method);
+
+        boolean skip =
+                uri.startsWith("/api/auth/")
+                        || uri.startsWith("/api/admin/toilets/")
+                        || "OPTIONS".equalsIgnoreCase(method);
+
+        System.out.println("🟡 skip JWT filter = " + skip);
+        return skip;
+    }
+
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
+
+        System.out.println("🔴 JwtAuthenticationFilter 진입");
+
+        // CORS preflight 무조건 통과
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        String path = request.getRequestURI();
-
-        // 로그인, 회원가입, 토큰 재발급은 JWT 필터 적용 제외
-        if (path.startsWith("/api/auth/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -46,14 +60,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
             username = jwtUtil.extractUsername(token);
+            System.out.println("🟢 JWT username = " + username);
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails =
+                    userDetailsService.loadUserByUsername(username);
+
             if (jwtUtil.validateToken(token)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+                System.out.println("🟢 JWT 인증 성공");
             }
         }
 
