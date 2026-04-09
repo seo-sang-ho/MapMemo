@@ -22,21 +22,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        String method = request.getMethod();
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
 
-        System.out.println("🟡 shouldNotFilter uri = " + uri);
-        System.out.println("🟡 method = " + method);
-
-        boolean skip =
-                uri.startsWith("/api/auth/")
-                        || uri.startsWith("/api/admin/toilets/")
-                        || "OPTIONS".equalsIgnoreCase(method);
-
-        System.out.println("🟡 skip JWT filter = " + skip);
-        return skip;
+        // permitAll URL은 JWT 인증 필터 스킵
+        return path.startsWith("/api/auth/") || path.startsWith("/api/toilets/nearby");
     }
+
 
     @Override
     protected void doFilterInternal(

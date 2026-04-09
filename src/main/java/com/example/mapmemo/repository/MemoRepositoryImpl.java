@@ -21,11 +21,6 @@ public class MemoRepositoryImpl implements MemoRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
 
-    @Autowired
-    public MemoRepositoryImpl(EntityManager em) {
-        this.queryFactory = new JPAQueryFactory(em);
-    }
-
     @Override
     public List<Memo> searchMemos(MemoSearchCondition condition) {
         return queryFactory

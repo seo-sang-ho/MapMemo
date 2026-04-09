@@ -75,4 +75,17 @@ public class PublicToiletService {
                 .filter(t -> t.getLatitude() != null && t.getLongitude() != null)
                 .toList();
     }
+
+    public List<PublicToilet> findNearBy(
+            double lat,
+            double lng,
+            double radius
+    ) {
+        System.out.println("findNearBy called: " + lat + ", " + lng + ", " + radius);
+        return toiletRepository.findNear(lat, lng, radius);
+    }
+
+    public List<PublicToilet> findInBounds(double minLat, double maxLat, double minLng, double maxLng) {
+        return toiletRepository.findInBounds(minLat,maxLat,minLng,maxLng);
+    }
 }
