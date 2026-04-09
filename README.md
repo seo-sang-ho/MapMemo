@@ -8,7 +8,7 @@
 ## 🚀 주요 기능
 
 ## 🗺️ 메인 지도 화면
-<img src="resources/images/mainPage.png" width="700"/>
+<img src="src/main/resources/images/mainPage.png" width="700"/>
 
 - 사용자 위치 기반 지도 제공
 - 메모 마커 표시
@@ -16,7 +16,7 @@
 ---
 
 ## 📝 메모 생성
-<img src="resources/images/createMemo.png" width="700"/>
+<img src="src/main/resources/images/createMemo.png" width="700"/>
 
 - 지도 클릭으로 메모 생성
 - 제목 및 내용 입력
@@ -24,7 +24,7 @@
 ---
 
 ## 🚻 공중화장실 기능
-<img src="resources/images/publicToilet.png" width="700"/>
+<img src="src/main/resources/images/publicToilet.png" width="700"/>
 
 - 공공데이터 기반 위치 제공
 
