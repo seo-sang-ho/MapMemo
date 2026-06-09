@@ -14,8 +14,7 @@ spring:
     show-sql: true
 
   config:
-    import:
-      - classpath:application-secret.yml
+    import: optional:classpath:application-secret.yml
 
   servlet:
     multipart:
