@@ -36,8 +36,12 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/admin/toilets/**").permitAll() // 🔥 여기
-                        .requestMatchers("/api/toilets/nearby/**").permitAll()
+                        .requestMatchers("/api/admin/toilets/**").permitAll()
+
+                        .requestMatchers("/api/toilets").permitAll()
+                        .requestMatchers("/api/toilets/nearby").permitAll()
+                        .requestMatchers("/api/toilets/in-bounds").permitAll()
+
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated()
                 )
