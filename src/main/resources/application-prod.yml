@@ -5,6 +5,10 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
+logging:
+  level:
+    org.springframework.security: DEBUG
+
   jpa:
     hibernate:
       ddl-auto: update
